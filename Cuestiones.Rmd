@@ -15,5 +15,42 @@ texto <-"Pues sepa Vuestra Merced, ante todas cosas, que a mí llaman Lázaro de
 De manera que con verdad me puedo decir nacido en el río. Pues siendo yo niño de ocho años, achacaron a mi padre ciertas sangrías mal hechas en los costales de los que allí a moler venían, por lo cual fue preso, y confesó y no negó, y padeció persecución por justicia. Espero en Dios que está en la gloria, pues el Evangelio los llama bienaventurados. En este tiempo se hizo cierta armada contra moros, entre los cuales fue mi padre (que a la sazón estaba desterrado por el desastre ya dicho), con cargo de acemilero de un caballero que allá fue. Y con su señor, como leal criado, feneció su vida.
 Mi viuda madre, como sin marido y sin abrigo se viese, determinó arrimarse a los buenos por ser uno de ellos, y vínose a vivir a la ciudad y alquiló una casilla y metióse a guisar de comer a ciertos estudiantes, y lavaba la ropa a ciertos mozos de caballos del comendador de la Magdalena, de manera que fue frecuentando las caballerizas."
 
+texto1 <- strsplit(texto, split = " ")
+# a)
+gregexpr("[^aeiouAEIOUYy]", texto)
+length(grep("[^aeiouáéíóúÁÉÍÓÚ]", unlist(strsplit(texto, "")), value = TRUE))
+
+# b)
+gregexpr("[^aeiouAEIOU][^[:punct:]][^[:space:]]", texto) # with [^[:digit:]]??
+grep("[^aeiouAEIOU]", texto1) # with [^[:digit:]]??
+length(grep("[bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ]", unlist(strsplit(texto, "")), value = TRUE))
+
+# c)
+gregexpr("[aeiouAEIOU]", texto)
+
+# d)
+gregexpr("^\\s[aeiouAEIOU]", texto)
+gregexpr("\\s+[aeiouáéíóúÁÉÍÓÚ]\\w*", texto, ignore.case = TRUE) # 57, respuesta correcta?
 ```
+
+```{r}
+library(readr)
+Nosotros <- read_delim("Nosotros.tsv", delim = "\t", 
+    escape_double = FALSE, trim_ws = TRUE)
+
+library(dplyr)
+library(magrittr)
+Nosotros$`FechaNac(DD-MM-YYY)` <- gsub('/','-',Nosotros$`FechaNac(DD-MM-YYY)`)
+
+fecha_ini <- as.Date("2022-02-03")
+
+test <- Nosotros %>% 
+    mutate(fecha = as.Date(Nosotros$`FechaNac(DD-MM-YYY)`, "%d-%m-%Y")) %>%
+    mutate(age = time_length(difftime(fecha_ini, fecha), "years"))
+
+sum(test$age) # resultado s trista zora
+
+
+```
+
 
