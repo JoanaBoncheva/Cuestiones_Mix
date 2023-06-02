@@ -53,4 +53,21 @@ sum(test$age) # resultado s trista zora
 
 ```
 
+```{r}
+# Cuestion 3
+
+library(readr)
+UScereal <- read_csv("UScereal.csv")
+
+reglaboxplot <- function(x) { 
+  vect <- x < quantile(x, 1/4, na.rm = T) - 1.5*IQR(x, na.rm = T) | x > quantile(x, 3/4, na.rm = T) + 1.5*IQR(x, na.rm = T)
+  return(vect)
+}
+
+UScereal <- UScereal %>% mutate(outl = reglaboxplot(UScereal$protein))
+test <- UScereal %>% filter(outl == FALSE)
+median(test$protein)
+```
+
+
 
