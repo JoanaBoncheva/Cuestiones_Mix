@@ -18,7 +18,8 @@ Mi viuda madre, como sin marido y sin abrigo se viese, determinó arrimarse a lo
 texto1 <- strsplit(texto, split = " ")
 # a)
 gregexpr("[^aeiouAEIOUYy]", texto)
-length(grep("[^aeiouáéíóúÁÉÍÓÚ]", unlist(strsplit(texto, "")), value = TRUE))
+length(grep("[^aeiouyAEIOU]", unlist(strsplit(texto, "")), value = TRUE))
+
 
 # b)
 gregexpr("[^aeiouAEIOU][^[:punct:]][^[:space:]]", texto) # with [^[:digit:]]??
@@ -27,10 +28,25 @@ length(grep("[bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ]", unlist(strsplit(text
 
 # c)
 gregexpr("[aeiouAEIOU]", texto)
+# otro cuest
+length(grep("[aA]", unlist(strsplit(texto, ""))))
+# caracteres en blanco
+length(grep(" ", unlist(strsplit(texto, ""))))
 
 # d)
 gregexpr("^\\s[aeiouAEIOU]", texto)
 gregexpr("\\s+[aeiouáéíóúÁÉÍÓÚ]\\w*", texto, ignore.case = TRUE) # 57, respuesta correcta?
+
+
+# cuantas veces se repite cada caracter
+caracteres <- unlist(strsplit(texto, ""))
+
+# Contar la frecuencia de cada carácter
+frecuencia <- table(caracteres)
+
+# Imprimir el resultado
+print(frecuencia)
+
 ```
 
 ```{r}
@@ -40,15 +56,16 @@ Nosotros <- read_delim("Nosotros.tsv", delim = "\t",
 
 library(dplyr)
 library(magrittr)
+library(lubridate)
 Nosotros$`FechaNac(DD-MM-YYY)` <- gsub('/','-',Nosotros$`FechaNac(DD-MM-YYY)`)
 
 fecha_ini <- as.Date("2022-02-03")
 
 test <- Nosotros %>% 
     mutate(fecha = as.Date(Nosotros$`FechaNac(DD-MM-YYY)`, "%d-%m-%Y")) %>%
-    mutate(age = time_length(difftime(fecha_ini, fecha), "years"))
+    mutate(age = (time_length(difftime(fecha_ini, fecha), 'days')))
 
-sum(test$age) # resultado s trista zora
+sum(test$age)/365 # resultado s trista zora
 
 
 ```
@@ -83,7 +100,18 @@ madm <- function(x, na.rm=T) {
 
 UScereal1 <- UScereal %>% mutate(outl = reglahampel(UScereal$carbo))
 test <- UScereal1 %>% filter(outl == FALSE)
-round(mean(test$carbo), 3)
+mean(test$carbo)
+
+
+# Regla 3 sigma
+reglasigma <- function(x, na.rm = T) { 
+  vect <- x < mean(x, na.rm = T) - 3*sd(x, na.rm = T) | x > mean(x, na.rm = T) + 3*sd(x, na.rm = T)
+  return(vect)
+}
+
+UScereal2 <- UScereal %>% mutate(outl = reglahampel(UScereal$protein))
+test2 <- UScereal2%>% filter(outl == FALSE)
+median(test2$protein)
 ```
 
 
