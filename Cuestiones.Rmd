@@ -67,6 +67,23 @@ reglaboxplot <- function(x) {
 UScereal <- UScereal %>% mutate(outl = reglaboxplot(UScereal$protein))
 test <- UScereal %>% filter(outl == FALSE)
 median(test$protein)
+
+reglahampel <- function(x) { 
+  vect <- x < median(x, na.rm = T) - 3*madm(x, na.rm = T) | x > median(x, na.rm = T) + 3*madm(x, na.rm = T)
+  return(vect)
+}
+
+madm <- function(x, na.rm=T) { 
+    m <- median(x, na.rm=T)
+    madm <- 1.4826*median(abs(x-m), na.rm=T)
+    return(madm)
+  
+  }
+
+
+UScereal1 <- UScereal %>% mutate(outl = reglahampel(UScereal$carbo))
+test <- UScereal1 %>% filter(outl == FALSE)
+round(mean(test$carbo), 3)
 ```
 
 
