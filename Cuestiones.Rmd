@@ -109,7 +109,7 @@ reglasigma <- function(x, na.rm = T) {
   return(vect)
 }
 
-UScereal2 <- UScereal %>% mutate(outl = reglahampel(UScereal$protein))
+UScereal2 <- UScereal %>% mutate(outl = reglasigma(UScereal$protein))
 test2 <- UScereal2%>% filter(outl == FALSE)
 median(test2$protein)
 ```
